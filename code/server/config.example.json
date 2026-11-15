@@ -1,0 +1,18 @@
+{
+  "indexer_url": "https://127.0.0.1:9200",
+  "auth_file": "/etc/wazuh-password-audit/indexer-auth.json",
+  "ca_file": "/etc/wazuh-indexer/certs/root-ca.pem",
+  "allow_insecure_tls": false,
+  "source_indices": "wazuh-archives-*",
+  "target_alias": "lab-password-audit-current",
+  "target_prefix": "lab-password-audit-state-v2",
+  "inventory_file": "/etc/wazuh-password-audit/expected-agents.json",
+  "max_age_seconds": 7200,
+  "future_tolerance_seconds": 300,
+  "publication_ttl_seconds": 300,
+  "http_timeout_seconds": 30,
+  "max_users_per_host": 10000,
+  "bulk_batch_size": 500,
+  "retention_keep_generations": 0,
+  "lock_file": "/run/wazuh-password-audit.lock"
+}

@@ -1,0 +1,26 @@
+# Эксплуатационные секреты и временные материалы
+**/client.keys
+**/agent-client.keys
+**/indexer-auth.json
+**/*.private.*
+.env
+.env.*
+live/
+endpoint-secrets/
+*.pem
+*.key
+# Установочные материалы и виртуальные машины
+*.msi
+*.iso
+*.vmdk
+*.vmx
+*.vmem
+*.vmsn
+# Локальные среды и результаты тестов
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+LOCAL_TEST_ONLY_*
+.DS_Store
+Thumbs.db

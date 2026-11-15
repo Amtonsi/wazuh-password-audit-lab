@@ -1,0 +1,26 @@
+[
+  {
+    "agent_id": "001",
+    "agent_name": "WINXP-SP2-01",
+    "os": "Windows XP SP2",
+    "expected": true
+  },
+  {
+    "agent_id": "002",
+    "agent_name": "WIN7-01",
+    "os": "Windows 7",
+    "expected": true
+  },
+  {
+    "agent_id": "003",
+    "agent_name": "WIN10-01",
+    "os": "Windows 10",
+    "expected": true
+  },
+  {
+    "agent_id": "004",
+    "agent_name": "WIN11-AMTONSI",
+    "os": "Windows 11",
+    "expected": true
+  }
+]

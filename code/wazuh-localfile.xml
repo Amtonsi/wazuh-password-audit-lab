@@ -1,0 +1,6 @@
+<!-- Добавляем внутрь существующего ossec_config на АРМ.
+     Если этот источник уже задан через agent.conf, второй раз его не добавляем. -->
+<localfile>
+  <location>C:\SIEM-Audit\Password\logs\password-audit-*.jsonl</location>
+  <log_format>json</log_format>
+</localfile>

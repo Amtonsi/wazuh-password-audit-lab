@@ -1,0 +1,10 @@
+{
+  "dashboard_id": "lab-password-audit-v2-overview",
+  "objects": 4,
+  "panels": 3,
+  "alias": "lab-password-audit-current",
+  "live_imported": false,
+  "time_filter_applied": false,
+  "query_limit": 10000,
+  "notice": "Все Vega-панели показывают текущее состояние alias; исторический диапазон и общий DQL не применяются. Пагинация таблиц локальная, лимит запроса отображается явно."
+}

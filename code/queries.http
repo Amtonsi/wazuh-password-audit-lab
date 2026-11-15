@@ -1,0 +1,25 @@
+# Последние сводки по агентам, включая ошибочные.
+# Не фильтруем заранее status=ok и threshold_exceeded=true.
+# Для большого парка повторяем composite-запрос с after_key до конца списка.
+GET /wazuh-archives-*/_search
+{
+  "size": 0,
+  "query": {"term": {"data.password_audit_v2.kind": "summary"}},
+  "aggs": {
+    "agents": {
+      "composite": {"size": 100, "sources": [{"agent": {"terms": {"field": "agent.id"}}}]},
+      "aggs": {
+        "latest": {
+          "top_hits": {
+            "size": 1,
+            "sort": [{"timestamp": {"order": "desc"}}],
+            "_source": ["agent", "timestamp", "data.password_audit_v2"]
+          }
+        }
+      }
+    }
+  }
+}
+
+# Просматриваем mapping нового пространства полей.
+GET /wazuh-archives-*/_mapping/field/data.password_audit_v2.*

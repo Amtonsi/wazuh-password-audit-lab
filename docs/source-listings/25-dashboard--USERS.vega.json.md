@@ -1,0 +1,1027 @@
+# `dashboard/USERS.vega.json`
+
+Полный читаемый листинг файла. Это сгенерированное представление в UTF-8: BOM снят для отображения, окончания строк представлены как LF. Для запуска и сохранения исходной кодировки используем [оригинал в `code/`](../../code/dashboard/USERS.vega.json). Исполняемый код в оригинале сохранён побайтно.
+
+**Назначение.** Полный код таблицы пользователей с возрастом, порогом, бессрочностью, признаками истечения и цветовой индикацией.
+
+**Применение.** Используем как Vega 5-панель на текущем alias; таблица содержит локальную пагинацию.
+
+**Особенности.** Зелёный статус не подтверждает сложность пароля. Отключённые, облачные и неполные записи оцениваются отдельно. Пользователь идентифицируется по agent.id и SID.
+
+**Происхождение.** Проверенный исходный комплект.
+
+**Кодировка оригинала:** UTF-8 без BOM. **Объём:** 1005 строк.
+
+**SHA256 оригинала:** `3eae9dcf02a5562200b1bd993d3d1c2a0018f3c4fc6f149022a823be9b71b434`.
+
+Для файлов без завершающего переноса строки перед закрывающим ограждением Markdown добавлен только разделительный LF; оригинал и его контрольная сумма остаются прежними.
+
+## Полный код
+
+```json
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "background": "#FFFFFF",
+  "width": "container",
+  "height": "container",
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "padding": 8,
+  "config": {
+    "text": {
+      "font": "Arial"
+    }
+  },
+  "signals": [
+    {
+      "name": "clock",
+      "init": "now()",
+      "on": [
+        {
+          "events": {
+            "type": "timer",
+            "throttle": 10000
+          },
+          "update": "now()"
+        }
+      ]
+    },
+    {
+      "name": "totalHits",
+      "update": "length(data('response')) === 0 ? 0 : isNumber(data('response')[0].total) ? data('response')[0].total : isValid(data('response')[0].total) && isNumber(data('response')[0].total.value) ? data('response')[0].total.value : NaN"
+    },
+    {
+      "name": "truncated",
+      "update": "length(data('response')) > 0 && (!isFinite(totalHits) || totalHits > length(data('documents')) || (!isNumber(data('response')[0].total) && isValid(data('response')[0].total.relation) && data('response')[0].total.relation !== 'eq'))"
+    },
+    {
+      "name": "pageSize",
+      "value": 12
+    },
+    {
+      "name": "page",
+      "value": 0,
+      "on": [
+        {
+          "events": "@next:click",
+          "update": "min(page + 1, max(0, ceil(length(data('rows')) / pageSize) - 1))"
+        },
+        {
+          "events": "@previous:click",
+          "update": "max(0, page - 1)"
+        }
+      ]
+    },
+    {
+      "name": "safePage",
+      "update": "min(page, max(0, ceil(length(data('rows')) / pageSize) - 1))"
+    }
+  ],
+  "data": [
+    {
+      "name": "response",
+      "url": {
+        "index": "lab-password-audit-current",
+        "body": {
+          "size": 10000,
+          "track_total_hits": true,
+          "query": {
+            "terms": {
+              "document_kind": [
+                "host",
+                "user"
+              ]
+            }
+          },
+          "sort": [
+            {
+              "agent_id": "asc"
+            },
+            {
+              "document_kind": "asc"
+            }
+          ]
+        }
+      },
+      "format": {
+        "property": "hits"
+      }
+    },
+    {
+      "name": "documents",
+      "source": "response",
+      "transform": [
+        {
+          "type": "flatten",
+          "fields": [
+            "hits"
+          ],
+          "as": [
+            "hit"
+          ]
+        },
+        {
+          "type": "formula",
+          "as": "r",
+          "expr": "datum.hit._source"
+        }
+      ]
+    },
+    {
+      "name": "hosts",
+      "source": "documents",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.r.document_kind === 'host'"
+        },
+        {
+          "type": "formula",
+          "as": "fresh",
+          "expr": "isValid(datum.r.valid_until) && isFinite(toNumber(toDate(datum.r.valid_until))) && clock <= toNumber(toDate(datum.r.valid_until))"
+        },
+        {
+          "type": "formula",
+          "as": "healthy",
+          "expr": "datum.fresh && datum.r.host_state === 'ok' && datum.r.snapshot_complete === true"
+        },
+        {
+          "type": "formula",
+          "as": "stateLabel",
+          "expr": "!datum.fresh ? 'Данные устарели' : datum.r.host_state_label"
+        },
+        {
+          "type": "formula",
+          "as": "agent",
+          "expr": "datum.r.agent_id"
+        }
+      ]
+    },
+    {
+      "name": "rows",
+      "source": "documents",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.r.document_kind === 'user'"
+        },
+        {
+          "type": "lookup",
+          "from": "hosts",
+          "key": "agent",
+          "fields": [
+            "r.agent_id"
+          ],
+          "as": [
+            "host"
+          ]
+        },
+        {
+          "type": "formula",
+          "as": "fresh",
+          "expr": "isValid(datum.r.valid_until) && isFinite(toNumber(toDate(datum.r.valid_until))) && clock <= toNumber(toDate(datum.r.valid_until))"
+        },
+        {
+          "type": "formula",
+          "as": "state",
+          "expr": "!datum.fresh ? 'stale' : datum.r.row_state"
+        },
+        {
+          "type": "formula",
+          "as": "name",
+          "expr": "datum.r.agent_name"
+        },
+        {
+          "type": "formula",
+          "as": "user",
+          "expr": "datum.r.username"
+        },
+        {
+          "type": "formula",
+          "as": "age",
+          "expr": "isValid(datum.r.age_seconds) ? datum.r.age_seconds < 86400 ? 'Менее суток' : format(floor(datum.r.age_seconds / 86400), ',') + ' сут.' : '—'"
+        },
+        {
+          "type": "formula",
+          "as": "threshold",
+          "expr": "(datum.r.threshold_exceeded === true ? 'Да' : datum.r.threshold_exceeded === false ? 'Нет' : '—') + (isValid(datum.r.threshold_days) ? ' / ' + datum.r.threshold_days : '')"
+        },
+        {
+          "type": "formula",
+          "as": "never",
+          "expr": "datum.r.never_expires === true ? 'Да' : datum.r.never_expires === false ? 'Нет' : '—'"
+        },
+        {
+          "type": "formula",
+          "as": "reported",
+          "expr": "datum.r.expired_reported === true ? 'Да' : datum.r.expired_reported === false ? 'Нет' : '—'"
+        },
+        {
+          "type": "formula",
+          "as": "policy",
+          "expr": "datum.r.policy_expired_calculated === true ? 'Истёк' : datum.r.policy_expired_calculated === false ? 'Не истёк' : 'Не определён'"
+        },
+        {
+          "type": "formula",
+          "as": "label",
+          "expr": "!datum.fresh ? 'Данные устарели' : datum.r.row_state_label"
+        },
+        {
+          "type": "formula",
+          "as": "observed",
+          "expr": "isValid(datum.r.observed_at) ? timeFormat(toDate(datum.r.observed_at), '%d.%m %H:%M') : '—'"
+        },
+        {
+          "type": "formula",
+          "as": "paper",
+          "expr": "datum.state === 'overdue' ? '#FDEBE9' : datum.state === 'ok' ? '#EAF5EE' : '#F1F3F6'"
+        },
+        {
+          "type": "formula",
+          "as": "ink",
+          "expr": "datum.state === 'overdue' ? '#B42318' : datum.state === 'ok' ? '#166534' : '#526175'"
+        },
+        {
+          "type": "collect",
+          "sort": {
+            "field": [
+              "r.agent_name",
+              "r.username"
+            ],
+            "order": [
+              "ascending",
+              "ascending"
+            ]
+          }
+        },
+        {
+          "type": "window",
+          "ops": [
+            "row_number"
+          ],
+          "as": [
+            "row"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "visible",
+      "source": "rows",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.row > safePage * pageSize && datum.row <= (safePage + 1) * pageSize"
+        },
+        {
+          "type": "formula",
+          "as": "localRow",
+          "expr": "datum.row - safePage * pageSize - 1"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "0"
+          },
+          "y": {
+            "signal": "12"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "#B42318"
+          },
+          "text": {
+            "signal": "truncated ? 'Данные ограничены 10 000 документами. Показатели неполные; уточните область запроса.' : ''"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "width * 0.76"
+          },
+          "y": {
+            "signal": "height - 8"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "#087F8C"
+          },
+          "cursor": {
+            "value": "pointer"
+          },
+          "text": {
+            "signal": "'‹ Назад'"
+          }
+        }
+      },
+      "name": "previous"
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "width * 0.88"
+          },
+          "y": {
+            "signal": "height - 8"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "#087F8C"
+          },
+          "cursor": {
+            "value": "pointer"
+          },
+          "text": {
+            "signal": "'Далее ›'"
+          }
+        }
+      },
+      "name": "next"
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "0"
+          },
+          "y": {
+            "signal": "height - 8"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "#526175"
+          },
+          "text": {
+            "signal": "length(data('rows')) === 0 ? 'Нет записей' : 'Страница ' + (safePage + 1) + ' / ' + ceil(length(data('rows')) / pageSize) + ' · записей: ' + length(data('rows'))"
+          }
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "encode": {
+        "update": {
+          "x": {
+            "value": 0
+          },
+          "y": {
+            "value": 26
+          },
+          "width": {
+            "signal": "width"
+          },
+          "height": {
+            "value": 38
+          },
+          "fill": {
+            "value": "#172B4D"
+          }
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "value": 0
+          },
+          "y": {
+            "signal": "64 + datum.localRow * 34"
+          },
+          "width": {
+            "signal": "width"
+          },
+          "height": {
+            "value": 33
+          },
+          "fill": {
+            "field": "paper"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'АРМ'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "name"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.13 - 10"
+          },
+          "tooltip": {
+            "signal": "datum.name"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.13"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'Пользователь'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.13"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "user"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.15 - 10"
+          },
+          "tooltip": {
+            "signal": "datum.user"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.28"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'Возраст'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.28"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "age"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.09 - 10"
+          },
+          "tooltip": {
+            "signal": "isValid(datum.r.age_seconds) ? format(datum.r.age_seconds, ',') + ' с' : 'Нет данных'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.37"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'> порога / сут.'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.37"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "threshold"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.07 - 10"
+          },
+          "tooltip": {
+            "signal": "datum.threshold"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.44"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'Бессроч.'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.44"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "never"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.07 - 10"
+          },
+          "tooltip": {
+            "signal": "datum.never"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.51"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'Windows: истёк'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.51"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "reported"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.11 - 10"
+          },
+          "tooltip": {
+            "signal": "datum.reported"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.62"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'По политике'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.62"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "policy"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.11 - 10"
+          },
+          "tooltip": {
+            "signal": "datum.policy"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.73"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'Состояние'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.73"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "label"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.16 - 10"
+          },
+          "tooltip": {
+            "signal": "datum.label"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.89"
+          },
+          "y": {
+            "signal": "49"
+          },
+          "fontSize": {
+            "value": 10
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "white"
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "text": {
+            "signal": "'Проверка'"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "visible"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "6 + width * 0.89"
+          },
+          "y": {
+            "signal": "64 + (datum.localRow + 0.5) * 34"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "field": "observed"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fill": {
+            "field": "ink"
+          },
+          "limit": {
+            "signal": "width * 0.11 - 10"
+          },
+          "tooltip": {
+            "signal": "datum.observed"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {
+            "signal": "8"
+          },
+          "y": {
+            "signal": "100"
+          },
+          "fontSize": {
+            "value": 12
+          },
+          "font": {
+            "value": "Arial"
+          },
+          "fill": {
+            "value": "#526175"
+          },
+          "text": {
+            "signal": "length(data('rows')) === 0 ? 'Данные ещё не опубликованы. Проверяем сбор и обработчик состояния.' : ''"
+          }
+        }
+      }
+    }
+  ]
+}
+```

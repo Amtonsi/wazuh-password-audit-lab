@@ -1,0 +1,8 @@
+<!-- Объединяем с существующим agent.conf нужной группы Windows.
+     Этот файл задаёт чтение журнала; скрипты и задачи он не устанавливает. -->
+<agent_config os="Windows">
+  <localfile>
+    <location>C:\SIEM-Audit\Password\logs\password-audit-*.jsonl</location>
+    <log_format>json</log_format>
+  </localfile>
+</agent_config>
