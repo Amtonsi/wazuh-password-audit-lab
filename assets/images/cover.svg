@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Контроль паролей в Wazuh</title>
+  <desc id="desc">Четыре АРМ Windows XP, 7, 10 и 11 передают сведения в Wazuh. Лаборатория без Active Directory.</desc>
+  <defs>
+    </defs>
+  <rect width="1600" height="900" fill="#F8F9F5" />
+  <path d="M80 90H160" stroke="#087F8C" stroke-width="6" />
+  <text x="180" y="97" font-size="18" font-weight="700" letter-spacing="2" font-family="Arial" fill="#07585C">ЛАБОРАТОРИЯ SIEM</text>
+  <text x="80" y="253" font-size="92" font-weight="700" letter-spacing="-3" font-family="Arial" fill="#0B2030">КОНТРОЛЬ</text>
+  <text x="80" y="355" font-size="92" font-weight="700" letter-spacing="-3" font-family="Arial" fill="#0B2030">ПАРОЛЕЙ</text>
+  <path d="M82 400H230" stroke="#087F8C" stroke-width="7" />
+  <text x="80" y="485" font-size="47" font-family="Arial" fill="#0B2030">в Wazuh</text>
+  <text x="80" y="555" font-size="28" font-family="Arial" fill="#0B2030">Четыре поколения Windows.</text>
+  <text x="80" y="600" font-size="28" font-family="Arial" fill="#0B2030">Единая панель без Active Directory.</text>
+  <g font-size="20" font-weight="700" fill="#07585C">
+    <rect x="80" y="656" width="92" height="46" rx="3" fill="#E7EFEB" />
+    <text x="126" y="686" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700">XP</text>
+    <rect x="185" y="656" width="72" height="46" rx="3" fill="#E7EFEB" />
+    <text x="221" y="686" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700">7</text>
+    <rect x="270" y="656" width="82" height="46" rx="3" fill="#E7EFEB" />
+    <text x="311" y="686" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700">10</text>
+    <rect x="365" y="656" width="82" height="46" rx="3" fill="#E7EFEB" />
+    <text x="406" y="686" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700">11</text>
+  </g>
+  <rect x="1000" y="126" width="400" height="624" rx="12" fill="#EAF0EC" />
+  <path d="M1035 270V310H900V540H1190M1315 270V310H1470V540H1190M1035 460V540M1315 460V540" fill="none" stroke="#07585C" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+  <path d="M1190 540V610" fill="none" stroke="#07585C" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+  <g fill="#FBFCFA" stroke="#07585C" stroke-width="3">
+    <rect x="920" y="180" width="230" height="90" rx="8" />
+    <rect x="1200" y="180" width="230" height="90" rx="8" />
+    <rect x="920" y="370" width="230" height="90" rx="8" />
+    <rect x="1200" y="370" width="230" height="90" rx="8" />
+  </g>
+  <g font-size="27" font-weight="700" text-anchor="middle" fill="#0B2030">
+    <text x="1035" y="235" font-family="Arial" text-anchor="middle" font-size="27" font-weight="700">Windows XP</text>
+    <text x="1315" y="235" font-family="Arial" text-anchor="middle" font-size="27" font-weight="700">Windows 7</text>
+    <text x="1035" y="425" font-family="Arial" text-anchor="middle" font-size="27" font-weight="700">Windows 10</text>
+    <text x="1315" y="425" font-family="Arial" text-anchor="middle" font-size="27" font-weight="700">Windows 11</text>
+  </g>
+  <g fill="#087F8C" stroke="#F8F9F5" stroke-width="2">
+    <rect x="1027" y="262" width="16" height="16" />
+    <rect x="1307" y="262" width="16" height="16" />
+    <rect x="1027" y="452" width="16" height="16" />
+    <rect x="1307" y="452" width="16" height="16" />
+  </g>
+  <rect x="1040" y="610" width="300" height="110" rx="8" fill="#07585C" />
+  <text x="1190" y="664" font-size="45" font-weight="700" fill="#FFFFFF" text-anchor="middle" font-family="Arial">Wazuh</text>
+  <text x="1190" y="699" font-size="19" fill="#D4EAE5" text-anchor="middle" font-family="Arial">контроль локальных паролей</text>
+  <path d="M80 814H1520" stroke="#A9B5B5" stroke-width="1.5" />
+  <path d="M80 814H180" stroke="#087F8C" stroke-width="4" />
+  <polygon points="1181,593 1199,593 1190,610" fill="#07585C" />
+</svg>

@@ -2,3 +2,4 @@
 *.md text eol=lf
 code/** -text
 assets/images/** binary
+assets/images/*.svg text eol=lf

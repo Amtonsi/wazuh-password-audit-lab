@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1460" viewBox="0 0 1600 1460" role="img" aria-labelledby="title desc">
+  <title id="title">От четырёх АРМ к текущему состоянию в Wazuh</title>
+  <desc id="desc">Планировщик на каждом АРМ запускает локальный сборщик. JSONL через Wazuh Agent поступает в Manager, Filebeat и Indexer. Обработчик проверяет полноту и свежесть снимка, публикует состояние в alias; дашборд показывает также ошибки и устаревшие данные.</desc>
+  <defs>
+    </defs>
+  <rect width="1600" height="1460" fill="#F8F9F5" />
+  <path d="M60 60H145" stroke="#087F8C" stroke-width="6" />
+  <text x="170" y="72" font-size="36" font-weight="700" font-family="Arial" fill="#0B2030">Как данные попадают на дашборд</text>
+  <text x="60" y="145" font-family="Arial" fill="#07585C" font-size="22px" font-weight="700" letter-spacing="1px">01 / ЧЕТЫРЕ АРМ · ЛОКАЛЬНЫЙ СБОР КАЖДЫЙ ЧАС</text>
+  <g fill="#FFFFFF" stroke="#A4B9B6" stroke-width="2">
+    <rect x="60" y="180" width="340" height="110" rx="8" />
+    <rect x="440" y="180" width="340" height="110" rx="8" />
+    <rect x="820" y="180" width="340" height="110" rx="8" />
+    <rect x="1200" y="180" width="340" height="110" rx="8" />
+  </g>
+  <g text-anchor="middle">
+    <text x="230" y="225" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Windows XP SP2</text>
+    <text x="230" y="262" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">001 · VBS-адаптер</text>
+    <text x="610" y="225" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Windows 7</text>
+    <text x="610" y="262" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">002 · PowerShell</text>
+    <text x="990" y="225" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Windows 10</text>
+    <text x="990" y="262" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">003 · PowerShell</text>
+    <text x="1370" y="225" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Windows 11</text>
+    <text x="1370" y="262" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">004 · PowerShell</text>
+  </g>
+  <text x="60" y="335" font-family="Arial" fill="#415762" font-size="23px">На каждом АРМ независимо выполняем одну цепочку:</text>
+  <rect x="60" y="360" width="1480" height="120" rx="8" fill="#E9F0EC" />
+  <g text-anchor="middle">
+    <text x="235" y="410" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Планировщик</text>
+    <text x="235" y="447" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">учётная запись SYSTEM</text>
+    <text x="610" y="410" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Локальный сборщик</text>
+    <text x="610" y="447" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">метаданные пользователей</text>
+    <text x="995" y="410" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Журнал JSONL</text>
+    <text x="995" y="447" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">user + итоговая summary</text>
+    <text x="1370" y="410" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Wazuh Agent</text>
+    <text x="1370" y="447" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">передача новых строк</text>
+  </g>
+  <g fill="none" stroke="#07585C" stroke-width="3" stroke-linejoin="round">
+    <path d="M413 420H445" />
+    <path d="M793 420H825" />
+    <path d="M1173 420H1205" />
+    <path d="M1370 480V510H30V634H60" />
+  </g>
+  <rect x="680" y="492" width="234" height="38" fill="#F8F9F5" />
+  <text x="797" y="520" text-anchor="middle" font-family="Arial" fill="#415762" font-size="23px">TCP 1514</text>
+  <text x="60" y="563" font-family="Arial" fill="#07585C" font-size="22px" font-weight="700" letter-spacing="1px">02 / СЕРВЕР WAZUH · ИСТОРИЯ СОБЫТИЙ</text>
+  <g fill="#FFFFFF" stroke="#A4B9B6" stroke-width="2">
+    <rect x="60" y="580" width="430" height="108" rx="8" />
+    <rect x="585" y="580" width="430" height="108" rx="8" />
+    <rect x="1110" y="580" width="430" height="108" rx="8" />
+  </g>
+  <g text-anchor="middle">
+    <text x="275" y="624" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Wazuh Manager</text>
+    <text x="275" y="663" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">архив archives.json</text>
+    <text x="800" y="624" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Filebeat → Indexer</text>
+    <text x="800" y="663" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">история wazuh-archives-*</text>
+    <text x="1325" y="624" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700" text-anchor="middle">Обработчик состояния</text>
+    <text x="1325" y="663" font-family="Arial" fill="#415762" font-size="23px" text-anchor="middle">последний запуск по agent.id</text>
+  </g>
+  <g fill="none" stroke="#07585C" stroke-width="3" stroke-linejoin="round">
+    <path d="M490 634H585" />
+    <path d="M1015 634H1110" />
+    <path d="M1325 688V775H800V790" />
+  </g>
+  <text x="60" y="762" font-family="Arial" fill="#07585C" font-size="22px" font-weight="700" letter-spacing="1px">03 / ПРОВЕРКА СНИМКА И ПУБЛИКАЦИЯ · ПРИМЕРНО РАЗ В МИНУТУ</text>
+  <path d="M800 790L1000 875L800 960L600 875Z" fill="#E1EEEA" stroke="#07585C" stroke-width="2.5" />
+  <g text-anchor="middle">
+    <text x="800" y="862" font-size="26" font-weight="700" font-family="Arial" fill="#0B2030" text-anchor="middle">Снимок полный</text>
+    <text x="800" y="898" font-size="26" font-weight="700" font-family="Arial" fill="#0B2030" text-anchor="middle">и свежий?</text>
+  </g>
+  <g fill="none" stroke="#07585C" stroke-width="3" stroke-linejoin="round">
+    <path d="M800 960V1040" />
+    <path d="M1000 875H1110" />
+  </g>
+  <text x="822" y="1005" font-family="Arial" fill="#415762" font-size="23px">Да</text>
+  <text x="1035" y="853" font-family="Arial" fill="#415762" font-size="23px">Нет</text>
+  <rect x="1110" y="818" width="430" height="114" rx="8" fill="#ECEFF0" stroke="#9BAAB0" stroke-width="2" />
+  <text x="1325" y="864" text-anchor="middle" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700">Ошибка / устаревание</text>
+  <text x="1325" y="903" text-anchor="middle" font-family="Arial" fill="#415762" font-size="23px">сохраняем серый статус</text>
+  <path d="M1325 932V1095H1080" fill="none" stroke="#07585C" stroke-width="3" stroke-linejoin="round" />
+  <rect x="520" y="1040" width="560" height="110" rx="8" fill="#07585C" />
+  <text x="800" y="1084" font-size="27" font-weight="700" text-anchor="middle" font-family="Arial" fill="#FFFFFF">Публикуем текущее состояние</text>
+  <text x="800" y="1123" font-size="24" text-anchor="middle" font-family="Arial" fill="#D4EAE5">alias lab-password-audit-current</text>
+  <path d="M800 1150V1200" fill="none" stroke="#07585C" stroke-width="3" stroke-linejoin="round" />
+  <rect x="520" y="1200" width="560" height="110" rx="8" fill="#FFFFFF" stroke="#A4B9B6" stroke-width="2" />
+  <text x="800" y="1245" text-anchor="middle" font-family="Arial" fill="#0B2030" font-size="28px" font-weight="700">Карточки и таблицы Wazuh</text>
+  <text x="800" y="1284" text-anchor="middle" font-family="Arial" fill="#415762" font-size="23px">охват АРМ · пользователи · возраст пароля</text>
+  <g font-size="22">
+    <circle cx="103" cy="1382" r="9" fill="#157348" />
+    <text x="126" y="1390" font-family="Arial" fill="#0B2030" font-size="22">Срок не превышен</text>
+    <circle cx="583" cy="1382" r="9" fill="#B42318" />
+    <text x="606" y="1390" font-family="Arial" fill="#0B2030" font-size="22">Возраст / срок превышен</text>
+    <circle cx="1113" cy="1382" r="9" fill="#87939B" />
+    <text x="1136" y="1390" font-family="Arial" fill="#0B2030" font-size="22">Нет пригодной оценки</text>
+  </g>
+  <path d="M60 1430H1540" stroke="#A9B5B5" stroke-width="1.5" />
+  <polygon points="428,411 428,429 445,420" fill="#07585C" />
+  <polygon points="808,411 808,429 825,420" fill="#07585C" />
+  <polygon points="1188,411 1188,429 1205,420" fill="#07585C" />
+  <polygon points="43,625 43,643 60,634" fill="#07585C" />
+  <polygon points="568,625 568,643 585,634" fill="#07585C" />
+  <polygon points="1093,625 1093,643 1110,634" fill="#07585C" />
+  <polygon points="791,773 809,773 800,790" fill="#07585C" />
+  <polygon points="791,1023 809,1023 800,1040" fill="#07585C" />
+  <polygon points="1093,866 1093,884 1110,875" fill="#07585C" />
+  <polygon points="1097,1086 1097,1104 1080,1095" fill="#07585C" />
+  <polygon points="791,1183 809,1183 800,1200" fill="#07585C" />
+</svg>
